@@ -23,4 +23,12 @@ describe('FinalConfigurationComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should set the map on changes to "Map not found" because there is no map', () => {
+    expect(component.map()).toBe('Map not found');
+  });
+
+  it('should set the fileUrl on changes to a blob URL', () => {
+    expect(component.fileUrl).toBeDefined();
+  });
 });
