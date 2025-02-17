@@ -17,21 +17,35 @@ export class FinalConfigurationService {
     treasuresCoordinates: TreasureCoordinates[], 
     adventurersCoordinates: Adventurer[]) {
 
+    // Calculate the maximum number of movements for all adventurers to iterate over, as they are alternating
     const maxMouvements = computeMaxMovements(adventurersCoordinates);
+
+    // Set the treasures for each adventurer to 0, as they will be incremented when they find a treasure
     adventurersCoordinates.forEach((adventurer) => adventurer.treasures = 0);
 
       for (let i = 0; i < maxMouvements; i++) {
-        for (const adventurer of adventurersCoordinates) {
+        for (const [index, adventurer] of adventurersCoordinates.entries()) {
 
         if (adventurer.movements) {
             if (adventurer.movements[i] === 'A') {
 
               const adventurerOldPosition = { vertical: adventurer.vertical, horizontal: adventurer.horizontal };
               advanceAdventurer(adventurer, mapValues);
+
+              // Calculating the previous adventurer position
+              const previousAdventurerPosition = index > 0 ? 
+              { vertical: adventurersCoordinates[index -1].vertical, horizontal: adventurersCoordinates[index -1].horizontal } : 
+              null;
+              
+              // If the adventurer is on the same position as the previous adventurer, he will return to his old position
+              if(previousAdventurerPosition?.vertical === adventurer.vertical && previousAdventurerPosition?.horizontal === adventurer.horizontal) {
+                adventurer.vertical = adventurerOldPosition.vertical;
+                adventurer.horizontal = adventurerOldPosition.horizontal;
+              }
               
               for (const mountain of mountainsCoordinates) {
 
-                // If the adventurer is on a mountain, he will return to its previous position
+                // If the adventurer is on a mountain, he will return to his old position
                 if (adventurer.vertical === mountain.vertical && adventurer.horizontal === mountain.horizontal) {
                   adventurer.vertical = adventurerOldPosition.vertical;
                   adventurer.horizontal = adventurerOldPosition.horizontal;
@@ -42,6 +56,7 @@ export class FinalConfigurationService {
                 if (adventurer.vertical === treasure.vertical && adventurer.horizontal === treasure.horizontal) {
                   if (treasure.quantity > 0) {
                     treasure.quantity--;
+                    
                     if(adventurer.treasures !== undefined) {
                       adventurer.treasures++;
                     }
@@ -158,7 +173,9 @@ const redrawMap = (mapValues: MapValues, mountainsCoordinates: MountainsCoordina
   fileContent += treasures + '\n';
   
   fileContent += '# {A comme Aventurier} - {Nom de l’aventurier} - {Axe horizontal} - {Axe vertical} - {Orientation} - {Nb. trésors ramassés}\n';
-  const adventurers = adventurersCoordinates.map((adventurer) => 'A - ' + adventurer.name + ' - ' + adventurer.horizontal + ' - ' + adventurer.vertical + ' - ' + adventurer.orientation + ' - ' + adventurer.treasures + '\n').join('');
+  const adventurers = adventurersCoordinates.map(
+    (adventurer) => 'A - ' + adventurer.name + ' - ' + adventurer.horizontal + ' - ' + 
+    adventurer.vertical + ' - ' + adventurer.orientation + ' - ' + (adventurer.treasures ? adventurer.treasures : '0') + '\n').join('');
   fileContent += adventurers;
   return fileContent;
 }

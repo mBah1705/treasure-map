@@ -7,6 +7,7 @@ export type Adventurer = {
     treasures?: number;
 }
 
+
 export const extractAdventurers = (fileContent: string) => fileContent.split('\n').filter((line: string) => line.startsWith('A -'));
 
 export const extractAdventurersCoordinates = (fileContent: string): Adventurer[] => {
