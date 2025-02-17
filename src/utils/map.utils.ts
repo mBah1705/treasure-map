@@ -1,7 +1,7 @@
-import { Adventurer, findAdventurers } from "./adventurers.utils";
-import { extractMap, MapValues } from "./map-coordinates.utils";
-import { findMountains, MountainsCoordinates } from "./mountains.utils";
-import { findTreasure, TreasureCoordinates } from "./treasure.utils";
+import { findAdventurers } from "./adventurers.utils";
+import { extractMap } from "./map-coordinates.utils";
+import { findMountains } from "./mountains.utils";
+import { findTreasure } from "./treasure.utils";
 
 export const drawMap = (fileContent: string) => {
   const mapValues = extractMap(fileContent);
@@ -26,7 +26,7 @@ export const drawMap = (fileContent: string) => {
         item = '. ';
       } else if (isMountain(i, j)) {
         item = 'M ';
-      } else if (isTreasure(i, j)) {
+      } else if (isTreasure(i, j) && treasureQuantity(i, j)) {
         item = `T(${treasureQuantity(i, j)}) `;
       } else if (isAdventurer(i, j)) {
         item = `A(${adventurerName(i, j)}) `;

@@ -7,9 +7,9 @@ export type Adventurer = {
     treasures?: number;
 }
 
-const extractAdventurers = (fileContent: string) => fileContent.split('\n').filter((line: string) => line.startsWith('A -'));
+export const extractAdventurers = (fileContent: string) => fileContent.split('\n').filter((line: string) => line.startsWith('A -'));
 
-const extractAdventurersCoordinates = (fileContent: string): Adventurer[] => {
+export const extractAdventurersCoordinates = (fileContent: string): Adventurer[] => {
     const adventurerLines = extractAdventurers(fileContent);
 
     return adventurerLines.map((line: string) => {
@@ -20,7 +20,7 @@ const extractAdventurersCoordinates = (fileContent: string): Adventurer[] => {
             horizontal: parseInt(lineValues[2]),
             vertical: parseInt(lineValues[3]),
             orientation: lineValues[4],
-            movements: lineValues[5].trim()
+            movements: lineValues[5].trim().replace(/[^ADG]/gm, '')
         }
 
         return returnValue;
