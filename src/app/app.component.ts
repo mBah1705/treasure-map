@@ -32,6 +32,7 @@ export class AppComponent {
         this.fileContent.set(e.target.result);
         this.map.set(drawMap(e.target.result));
         this.adventurers.set(adventurers(e.target.result));
+        this.finalFileContent.set('');
     };
 
     reader.readAsText(file);

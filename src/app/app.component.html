@@ -16,8 +16,9 @@
       <button 
         (click)="simulateAdventure()">Simuler les mouvements des aventuriers
       </button>
-
-      <app-final-configuration [fileContent]="finalFileContent()"></app-final-configuration>
+      @if (finalFileContent()) {
+        <app-final-configuration [fileContent]="finalFileContent()"></app-final-configuration>
+      }
     </div>
   }
 }
