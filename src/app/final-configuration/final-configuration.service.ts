@@ -27,7 +27,7 @@ export class FinalConfigurationService {
             if (adventurer.movements[i] === 'A') {
 
               const adventurerOldPosition = { vertical: adventurer.vertical, horizontal: adventurer.horizontal };
-              moveAdventurer(adventurer, mapValues);
+              advanceAdventurer(adventurer, mapValues);
               
               for (const mountain of mountainsCoordinates) {
 
@@ -40,9 +40,11 @@ export class FinalConfigurationService {
               
               for (const treasure of treasuresCoordinates) {
                 if (adventurer.vertical === treasure.vertical && adventurer.horizontal === treasure.horizontal) {
-                  treasure.quantity--;
-                  if(adventurer.treasures !== undefined) {
-                    adventurer.treasures++;
+                  if (treasure.quantity > 0) {
+                    treasure.quantity--;
+                    if(adventurer.treasures !== undefined) {
+                      adventurer.treasures++;
+                    }
                   }
                 }
               }
@@ -51,19 +53,15 @@ export class FinalConfigurationService {
               rotateAdventurer(adventurer, adventurer.movements[i] as Rotation);
             }
           }
-
-          console.log(adventurer);
         }
       }
 
-      let fileContent = redrawMap(mapValues, mountainsCoordinates, treasuresCoordinates, adventurersCoordinates);
-
-      return fileContent;
+      return redrawMap(mapValues, mountainsCoordinates, treasuresCoordinates, adventurersCoordinates);
     }
   }
 
 
-const moveAdventurer = (adventurer: Adventurer, mapValues: MapValues) => {
+const advanceAdventurer = (adventurer: Adventurer, mapValues: MapValues) => {
   if (adventurer.orientation === 'N') {
     moveVerticallyOrReturn(adventurer.vertical - 1, adventurer, mapValues);
 
@@ -140,14 +138,27 @@ const computeMaxMovements =(adventurersCoordinates: Adventurer[]) => {
 }
 
 const redrawMap = (mapValues: MapValues, mountainsCoordinates: MountainsCoordinates[], treasuresCoordinates: TreasureCoordinates[], adventurersCoordinates: Adventurer[]) => {
-  let fileContent = 'C - ' + mapValues.width + ' - ' + mapValues.height + '\n';
+  let fileContent = '# {C comme Carte} - {Nb. de case en largeur} - {Nb. de case en hauteur}\n';
+  fileContent += 'C - ' + mapValues.width + ' - ' + mapValues.height + '\n' + '\n';
+
+  fileContent += '# {M comme Montagne} - {Axe horizontal} - {Axe vertical}\n';
   const mountains = mountainsCoordinates.map((mountain) => 'M - ' + mountain.horizontal + ' - ' + mountain.vertical + '\n').join('');
   fileContent += mountains + '\n';
 
-  const treasures = treasuresCoordinates.map((treasure) => 'T - ' + treasure.horizontal + ' - ' + treasure.vertical + ' - ' + treasure.quantity + '\n').join('');
-  fileContent += treasures + '\n';
+  fileContent += '# {T comme Trésor} - {Axe horizontal} - {Axe vertical} - {Nb. de trésors restants}\n';
+  const treasures = treasuresCoordinates.map((treasure) => {
+    if(treasure.quantity === 0) {
+      return;
+    }
+    
+    return ('T - ' + treasure.horizontal + ' - ' + treasure.vertical + ' - ' + treasure.quantity  + '\n')
+  }).join('');
 
-  const adventurers = adventurersCoordinates.map((adventurer) => 'A - ' + adventurer.name + ' - ' + adventurer.horizontal + ' - ' + adventurer.vertical + ' - ' + adventurer.orientation + ' - ' + adventurer.movements + '\n').join('');
+
+  fileContent += treasures + '\n';
+  
+  fileContent += '# {A comme Aventurier} - {Nom de l’aventurier} - {Axe horizontal} - {Axe vertical} - {Orientation} - {Nb. trésors ramassés}\n';
+  const adventurers = adventurersCoordinates.map((adventurer) => 'A - ' + adventurer.name + ' - ' + adventurer.horizontal + ' - ' + adventurer.vertical + ' - ' + adventurer.orientation + ' - ' + adventurer.treasures + '\n').join('');
   fileContent += adventurers;
   return fileContent;
 }

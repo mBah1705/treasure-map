@@ -1,1 +1,15 @@
-<p>{{ fileContent() }}</p>
+@let m = map();
+
+@if (m !== '' && m === mapNotFound) {
+    <p>Le fichier choisi ne contient pas de carte. <br> 
+      Vérifier que le fichier est bien au format .txt et contient bien la mention <b>"C -"</b></p>
+  } @else if( m) {
+    <div>
+      <h3>Le résultat de la randonnée</h3>
+      <pre>{{ map() }}</pre>
+    </div>
+}
+
+@if (fileUrl) {
+    <a [href]="fileUrl" download="file.txt">Télécharger le fichier de sortie</a>
+}
